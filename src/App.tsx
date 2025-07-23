@@ -2,6 +2,9 @@ import { useState } from 'react'
 import { Navigation } from './components/layout/Navigation'
 import { HomePage } from './pages/HomePage'
 import { ExercisesPage } from './pages/ExercisesPage'
+import { WorkoutGeneratorPage } from './pages/WorkoutGeneratorPage'
+import { ActiveWorkoutPage } from './pages/ActiveWorkoutPage'
+import { ProgressPage } from './pages/ProgressPage'
 import './App.css'
 
 function App() {
@@ -14,17 +17,11 @@ function App() {
       case 'exercises':
         return <ExercisesPage />
       case 'generator':
-        return <div className="min-h-screen bg-slate-50 flex items-center justify-center">
-          <p className="text-gray-600">Генератор тренировок - в разработке</p>
-        </div>
+        return <WorkoutGeneratorPage />
       case 'workout':
-        return <div className="min-h-screen bg-slate-50 flex items-center justify-center">
-          <p className="text-gray-600">Активная тренировка - в разработке</p>
-        </div>
+        return <ActiveWorkoutPage />
       case 'progress':
-        return <div className="min-h-screen bg-slate-50 flex items-center justify-center">
-          <p className="text-gray-600">Прогресс - в разработке</p>
-        </div>
+        return <ProgressPage />
       default:
         return <HomePage onPageChange={setCurrentPage} />
     }

@@ -391,13 +391,13 @@ export function ExercisesPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredExercises.map((exercise) => (
               <Card key={exercise.id} className="hover:shadow-lg transition-shadow">
-                <CardHeader>
-                  <div className="flex items-start justify-between">
-                    <div>
-                      <CardTitle className="text-lg">{exercise.name}</CardTitle>
-                      <p className="text-sm text-gray-600 mt-1">{exercise.muscleGroup}</p>
+                <CardHeader className="pb-3">
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="flex-1 min-w-0">
+                      <CardTitle className="text-lg leading-tight truncate">{exercise.name}</CardTitle>
+                      <p className="text-sm text-gray-600 mt-1 truncate">{exercise.muscleGroup}</p>
                     </div>
-                    <div className="flex space-x-1">
+                    <div className="flex space-x-1 flex-shrink-0">
                       <Button size="sm" variant="outline" onClick={() => handleEdit(exercise)}>
                         <Edit className="h-4 w-4" />
                       </Button>
@@ -407,31 +407,34 @@ export function ExercisesPage() {
                     </div>
                   </div>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="pt-0">
                   <div className="space-y-3">
                     <div className="flex flex-wrap gap-2">
-                      <Badge variant="secondary">{getExerciseTypeLabel(exercise.exerciseType)}</Badge>
-                      <Badge variant="outline">{getWeightTypeLabel(exercise.weightType)}</Badge>
+                      <Badge variant="secondary" className="text-xs">{getExerciseTypeLabel(exercise.exerciseType)}</Badge>
+                      <Badge variant="outline" className="text-xs">{getWeightTypeLabel(exercise.weightType)}</Badge>
                     </div>
                     
-                    <div className="grid grid-cols-2 gap-4 text-sm">
-                      <div>
-                        <span className="font-medium">Подходы:</span> {exercise.sets}
+                    <div className="grid grid-cols-2 gap-2 text-sm">
+                      <div className="bg-gray-50 p-2 rounded">
+                        <div className="text-xs text-gray-500">Подходы</div>
+                        <div className="font-medium">{exercise.sets}</div>
                       </div>
-                      <div>
-                        <span className="font-medium">Повторения:</span> {exercise.reps}
+                      <div className="bg-gray-50 p-2 rounded">
+                        <div className="text-xs text-gray-500">Повторения</div>
+                        <div className="font-medium">{exercise.reps}</div>
                       </div>
                     </div>
                     
                     {exercise.equipmentName && (
-                      <div className="text-sm">
-                        <span className="font-medium">Тренажер:</span> {exercise.equipmentName}
+                      <div className="text-sm bg-blue-50 p-2 rounded">
+                        <div className="text-xs text-blue-600 font-medium">Тренажер</div>
+                        <div className="text-blue-800 truncate">{exercise.equipmentName}</div>
                       </div>
                     )}
                     
                     <div className="text-sm">
-                      <span className="font-medium">Техника:</span>
-                      <p className="text-gray-600 mt-1 line-clamp-3">{exercise.technique}</p>
+                      <div className="text-xs text-gray-500 font-medium mb-1">Техника выполнения</div>
+                      <p className="text-gray-700 text-xs leading-relaxed line-clamp-3 break-words">{exercise.technique}</p>
                     </div>
                     
                     {exercise.equipmentPhoto && (
@@ -439,7 +442,7 @@ export function ExercisesPage() {
                         <img
                           src={exercise.equipmentPhoto}
                           alt={exercise.equipmentName || 'Тренажер'}
-                          className="w-full h-32 object-cover rounded-lg"
+                          className="w-full h-24 object-cover rounded-md"
                           onError={(e) => {
                             (e.target as HTMLImageElement).style.display = 'none'
                           }}

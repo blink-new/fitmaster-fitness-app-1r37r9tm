@@ -15,34 +15,36 @@ export interface Exercise {
   updatedAt: string
 }
 
-export interface Workout {
+export interface WorkoutSet {
   id: string
-  userId: string
-  name: string
-  createdAt: string
-  completedAt?: string
-  isActive: boolean
+  setNumber: number
+  reps: number
+  weight: number
+  completed: boolean
+  restTime: number
 }
 
 export interface WorkoutExercise {
   id: string
-  workoutId: string
   exerciseId: string
-  orderIndex: number
-  currentWeight?: number
-  weightAchieved: boolean
-  createdAt: string
-  exercise?: Exercise
+  exercise: Exercise
+  sets: number | WorkoutSet[] // Может быть числом при создании или массивом при выполнении
+  reps: number
+  weight: number
+  restTime: number
+  completed: boolean
+  weightTaken: boolean
+  order: number
 }
 
-export interface WorkoutSet {
+export interface Workout {
   id: string
-  workoutExerciseId: string
-  setNumber: number
-  weight?: number
-  reps?: number
-  completed: boolean
-  createdAt: string
+  userId: string
+  name: string
+  exercises: WorkoutExercise[]
+  startedAt: string
+  completedAt?: string
+  status: 'active' | 'completed'
 }
 
 export const MUSCLE_GROUPS = [

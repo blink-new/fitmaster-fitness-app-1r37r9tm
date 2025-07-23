@@ -20,13 +20,19 @@ export function HomePage({ onPageChange }: HomePageProps) {
     try {
       const workouts = await blink.db.workouts.list({
         where: { userId: user.id },
-        orderBy: { createdAt: 'desc' },
+        orderBy: { startedAt: 'desc' },
         limit: 5
       })
       
-      setRecentWorkouts(workouts)
+      // Парсим упражнения из JSON строк
+      const parsedWorkouts = workouts.map(workout => ({
+        ...workout,
+        exercises: JSON.parse(workout.exercises || '[]')
+      }))
       
-      const active = workouts.find(w => Number(w.isActive) > 0)
+      setRecentWorkouts(parsedWorkouts)
+      
+      const active = parsedWorkouts.find(w => w.status === 'active')
       setActiveWorkout(active || null)
     } catch (error) {
       console.error('Ошибка загрузки данных:', error)
@@ -82,7 +88,7 @@ export function HomePage({ onPageChange }: HomePageProps) {
                 <div>
                   <h3 className="font-semibold text-amber-900">{activeWorkout.name}</h3>
                   <p className="text-sm text-amber-700">
-                    Начата: {new Date(activeWorkout.createdAt).toLocaleString('ru')}
+                    Начата: {new Date(activeWorkout.startedAt).toLocaleString('ru')}
                   </p>
                 </div>
                 <Button 
@@ -154,12 +160,12 @@ export function HomePage({ onPageChange }: HomePageProps) {
                       <p className="text-sm text-gray-600">
                         {workout.completedAt 
                           ? `Завершена: ${new Date(workout.completedAt).toLocaleString('ru')}`
-                          : `Создана: ${new Date(workout.createdAt).toLocaleString('ru')}`
+                          : `Создана: ${new Date(workout.startedAt).toLocaleString('ru')}`
                         }
                       </p>
                     </div>
                     <div className="flex items-center space-x-2">
-                      {Number(workout.isActive) > 0 && (
+                      {workout.status === 'active' && (
                         <span className="px-2 py-1 bg-amber-100 text-amber-800 text-xs rounded-full">
                           Активна
                         </span>

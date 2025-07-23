@@ -51,59 +51,70 @@ export function ActiveWorkoutPage() {
     }
   }, [])
 
-  const loadWorkout = useCallback(async () => {
-    if (!user?.id || !workoutId) return
-    
-    try {
-      const data = await blink.db.workouts.list({
-        where: { 
-          AND: [
-            { userId: user.id },
-            { id: workoutId }
-          ]
-        }
-      })
-      
-      if (data.length > 0) {
-        const workoutData = data[0]
-        
-        // Парсим упражнения из JSON строки
-        let exercises: WorkoutExercise[]
-        try {
-          exercises = JSON.parse(workoutData.exercises)
-        } catch (e) {
-          console.error('Ошибка парсинга упражнений:', e)
-          return
-        }
-        
-        // Инициализируем подходы для каждого упражнения
-        const exercisesWithSets = exercises.map((exercise: WorkoutExercise) => ({
-          ...exercise,
-          sets: Array.from({ length: typeof exercise.sets === 'number' ? exercise.sets : exercise.sets.length }, (_, index) => ({
-            id: `set_${exercise.id}_${index}`,
-            setNumber: index + 1,
-            reps: exercise.reps,
-            weight: 0,
-            completed: false,
-            restTime: exercise.restTime || 60
-          } as WorkoutSet))
-        }))
-        
-        setWorkout({
-          ...workoutData,
-          exercises: exercisesWithSets
-        })
-      }
-    } catch (error) {
-      console.error('Ошибка загрузки тренировки:', error)
-    }
-  }, [user?.id, workoutId])
-
   useEffect(() => {
+    const loadWorkout = async () => {
+      if (!user?.id || !workoutId) {
+        console.log('Нет пользователя или ID тренировки:', { userId: user?.id, workoutId })
+        return
+      }
+      
+      console.log('Загружаем тренировку:', { userId: user.id, workoutId })
+      
+      try {
+        const data = await blink.db.workouts.list({
+          where: { 
+            userId: user.id,
+            id: workoutId
+          }
+        })
+        
+        console.log('Результат запроса тренировки:', data)
+        
+        if (data.length > 0) {
+          const workoutData = data[0]
+          console.log('Данные тренировки:', workoutData)
+          
+          // Парсим упражнения из JSON строки
+          let exercises: WorkoutExercise[]
+          try {
+            exercises = JSON.parse(workoutData.exercises)
+            console.log('Парсинг упражнений успешен:', exercises)
+          } catch (e) {
+            console.error('Ошибка парсинга упражнений:', e)
+            return
+          }
+          
+          // Инициализируем подходы для каждого упражнения
+          const exercisesWithSets = exercises.map((exercise: WorkoutExercise) => ({
+            ...exercise,
+            sets: Array.from({ length: typeof exercise.sets === 'number' ? exercise.sets : exercise.sets.length }, (_, index) => ({
+              id: `set_${exercise.id}_${index}`,
+              setNumber: index + 1,
+              reps: exercise.reps,
+              weight: 0,
+              completed: false,
+              restTime: exercise.restTime || 60
+            } as WorkoutSet))
+          }))
+          
+          console.log('Упражнения с подходами:', exercisesWithSets)
+          
+          setWorkout({
+            ...workoutData,
+            exercises: exercisesWithSets
+          })
+        } else {
+          console.log('Тренировка не найдена')
+        }
+      } catch (error) {
+        console.error('Ошибка загрузки тренировки:', error)
+      }
+    }
+
     if (user?.id && workoutId) {
       loadWorkout()
     }
-  }, [user?.id, workoutId, loadWorkout])
+  }, [user?.id, workoutId])
 
   // Таймер
   useEffect(() => {
